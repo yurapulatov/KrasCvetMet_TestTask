@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Memory;
 using NumericalSimulation.Entities;
 using NumericalSimulation.Interfaces;
 
@@ -7,19 +8,39 @@ namespace NumericalSimulation.Services
 {
     public class CacheService : ICacheService
     {
-        public Task AddNewEntity(CacheUserInputData userInputData, Guid sessionId)
+        private readonly IMemoryCache _cache;
+        private static readonly MemoryCacheEntryOptions Options = new MemoryCacheEntryOptions(); 
+
+        public CacheService(IMemoryCache cache)
         {
-            throw new NotImplementedException();
+            _cache = cache;
+            Options.SetAbsoluteExpiration(TimeSpan.FromHours(1));
         }
 
-        public Task<CacheUserInputData> GetEntity(Guid sessionId)
+        public void AddNewEntity(CacheUserInputData userInputData, Guid sessionId)
         {
-            throw new NotImplementedException();
+            if (_cache.TryGetValue(sessionId, out CacheUserInputData _))
+            {
+                _cache.Remove(sessionId);
+                _cache.Set(sessionId, userInputData, Options);
+            }
+            else
+            {
+                _cache.Set(sessionId, userInputData, Options);
+            }
         }
 
-        public Task RemoveEntityById(Guid sessionId)
+        public CacheUserInputData GetEntity(Guid sessionId)
         {
-            throw new NotImplementedException();
+            return _cache.TryGetValue(sessionId, out CacheUserInputData data) ? data : null;
+        }
+
+        public void RemoveEntityById(Guid sessionId)
+        {
+            if (_cache.TryGetValue(sessionId, out CacheUserInputData _))
+            {
+                _cache.Remove(sessionId);
+            }
         }
     }
 }
