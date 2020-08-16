@@ -6,8 +6,8 @@ namespace NumericalSimulation.Interfaces
 {
     public interface ICacheService
     {
-        void AddNewEntity(CacheUserInputData userInputData, Guid sessionId);
-        CacheUserInputData GetEntity(Guid sessionId);
+        void AddOrUpdateNewUserInputData(CacheUserInputData userInputData, Guid sessionId);
+        CacheUserInputData GetUserInputData(Guid sessionId);
         void RemoveEntityById(Guid sessionId);
     }
 }

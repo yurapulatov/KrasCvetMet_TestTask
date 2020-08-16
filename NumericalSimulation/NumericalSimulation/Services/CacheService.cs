@@ -17,7 +17,7 @@ namespace NumericalSimulation.Services
             Options.SetAbsoluteExpiration(TimeSpan.FromHours(1));
         }
 
-        public void AddNewEntity(CacheUserInputData userInputData, Guid sessionId)
+        public void AddOrUpdateNewUserInputData(CacheUserInputData userInputData, Guid sessionId)
         {
             if (_cache.TryGetValue(sessionId, out CacheUserInputData _))
             {
@@ -30,7 +30,7 @@ namespace NumericalSimulation.Services
             }
         }
 
-        public CacheUserInputData GetEntity(Guid sessionId)
+        public CacheUserInputData GetUserInputData(Guid sessionId)
         {
             return _cache.TryGetValue(sessionId, out CacheUserInputData data) ? data : null;
         }
