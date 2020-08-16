@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using NumericalSimulation.Entities;
@@ -11,11 +13,13 @@ namespace NumericalSimulation.Services
     {
         private readonly ICacheService _cacheService;
         private readonly IDataReader _dataReader;
+        private readonly ICalculationScheduleService _calculationScheduleService;
 
-        public SimulationService(ICacheService cacheService, IDataReader dataReader)
+        public SimulationService(ICacheService cacheService, IDataReader dataReader, ICalculationScheduleService calculationScheduleService)
         {
             _cacheService = cacheService;
             _dataReader = dataReader;
+            _calculationScheduleService = calculationScheduleService;
         }
 
         public async Task SetInputData(IFormFile formFile, InputDataTypeEnum type, Guid sessionId)
@@ -30,6 +34,63 @@ namespace NumericalSimulation.Services
                 userInputData = await UpdateUserInputData(formFile, type, userInputData);
             }
             _cacheService.AddOrUpdateNewUserInputData(userInputData, sessionId);
+        }
+
+        public IEnumerable<Schedule> GetScheduleByType(Guid sessionIdGuid,
+            ScheduleAlgorithmTypeEnum algorithmType)
+        {
+            var inputData = _cacheService.GetUserInputData(sessionIdGuid);
+            if (inputData == null)
+            {
+                throw new ArgumentNullException(nameof(inputData));
+            }
+            var parties = BindUserInputDataToParties(inputData);
+            var schedules = _calculationScheduleService.GetSchedule(parties, inputData.MachineToolsList);
+            return schedules;
+        }
+
+        private IEnumerable<Party> BindUserInputDataToParties(CacheUserInputData data)
+        {
+            var executeTimesListWithMT = new List<ExecuteTime>();
+            foreach (var machineTool in data.MachineToolsList)
+            {
+                var executeTimesList = data.ExecuteTimesList.Where(x => x.MachineToolId == machineTool.Id);
+                executeTimesListWithMT.AddRange(executeTimesList.Select(x => new ExecuteTime
+                {
+                    MachineToolId = machineTool.Id,
+                    MachineTool = machineTool,
+                    NomenclatureId = x.NomenclatureId,
+                    OperationTime = x.OperationTime
+                }));
+            }
+
+            var nomenclatureWithExecuteTime = new List<Nomenclature>();
+            var groupingExecuteTimesListWithMT = executeTimesListWithMT.GroupBy(x => x.NomenclatureId);
+            foreach (var group in groupingExecuteTimesListWithMT)
+            {
+                var nomenclatureList = data.NomenclaturesList.Where(x => x.Id == group.Key);
+
+                nomenclatureWithExecuteTime.AddRange(nomenclatureList.Select(x => new Nomenclature
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    ExecuteTimeList = group.ToList()
+                }));
+            }
+
+            var result = new List<Party>();
+            foreach (var nomenclature in nomenclatureWithExecuteTime)
+            {
+                var partiesList = data.PartiesList.Where(x => x.NomenclatureId == nomenclature.Id);
+                result.AddRange(partiesList.Select(x => new Party
+                {
+                    Id = x.Id,
+                    NomenclatureId = nomenclature.Id,
+                    Nomenclature = nomenclature
+                }));
+            }
+
+            return result;
         }
 
         private async Task<CacheUserInputData> UpdateUserInputData(IFormFile formFile, InputDataTypeEnum type,

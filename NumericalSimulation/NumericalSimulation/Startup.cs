@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using NumericalSimulation.FileExtensions;
 using NumericalSimulation.Interfaces;
 using NumericalSimulation.Services;
+using NumericalSimulation.Services.CalculationSchedule;
 
 namespace NumericalSimulation
 {
@@ -33,6 +34,9 @@ namespace NumericalSimulation
             services.AddMemoryCache();
             services.AddSingleton<ICacheService, CacheService>();
             services.AddScoped<NumericalSimulation.Interfaces.IDataReader, ExcelReader>();
+            services.AddSingleton<ICacheService, CacheService>();
+            services.AddScoped<ISimulationService, SimulationService>();
+            services.AddScoped<ICalculationScheduleService, SimpleCalculationScheduleService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

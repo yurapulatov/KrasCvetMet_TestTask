@@ -6,6 +6,6 @@ namespace NumericalSimulation.Entities
     {
         public long Id { get; set; }
         public long NomenclatureId { get; set; }
-        public List<Nomenclature> Nomenclatures { get; set; }
+        public Nomenclature Nomenclature { get; set; }
     }
 }
