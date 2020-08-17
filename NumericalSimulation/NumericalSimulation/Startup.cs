@@ -30,7 +30,8 @@ namespace NumericalSimulation
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllersWithViews();
+            services.AddMvc();
             services.AddMemoryCache();
             services.AddSingleton<ICacheService, CacheService>();
             services.AddScoped<NumericalSimulation.Interfaces.IDataReader, ExcelReader>();
@@ -48,12 +49,17 @@ namespace NumericalSimulation
             }
 
             app.UseHttpsRedirection();
-
+            app.UseStaticFiles();
             app.UseRouting();
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+            });
         }
     }
 }
