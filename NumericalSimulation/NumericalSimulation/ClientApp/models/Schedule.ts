@@ -6,5 +6,6 @@ export default class Schedule {
     public dateTimeTo: string;
     public partyId: number;
     public party: Party;
+    public machineToolId: number;
     public machineTool: MachineTool;
 }

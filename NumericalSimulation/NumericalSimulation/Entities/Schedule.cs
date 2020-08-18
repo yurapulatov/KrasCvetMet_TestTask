@@ -8,5 +8,7 @@ namespace NumericalSimulation.Entities
         public DateTime DateTimeTo { get; set; }
         public long PartyId { get; set; }
         public Party Party { get; set; }
+        public long MachineToolId { get; set; }
+        public MachineTool MachineTool { get; set; }
     }
 }
