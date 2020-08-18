@@ -42,7 +42,9 @@ namespace NumericalSimulation.Services.CalculationSchedule
                         DateTimeFrom = beginDateForParty.Value,
                         DateTimeTo = endDateForParty.Value,
                         PartyId = party.Id,
-                        Party = party
+                        Party = party,
+                        MachineTool = item.MachineTool,
+                        MachineToolId = item.NomenclatureId
                     };
                     result.Add(schedule);
                     machineToolCurrentTimeDictionary[item.MachineToolId] = endDateForParty.Value;
