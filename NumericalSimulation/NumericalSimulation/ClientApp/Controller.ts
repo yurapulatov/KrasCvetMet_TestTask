@@ -11,8 +11,8 @@ export default class Controller {
         return this.sendQuery(`${this.getHost()}/simulation?sessionId=${sessionId}&type=${type}`, "POST", file);
     }
 
-    public static async GetSchedule( nsessionId: string) {
-        return this.sendQuery(`${this.getHost()}/simulation?sessionId=${sessionId}&type=${type}`, "POST", file);
+    public static async getSchedule( sessionId: string) {
+        return this.sendQuery(`${this.getHost()}/simulation/schedule?sessionId=${sessionId}`, "GET");
     }
     
     private static async sendQuery(url: string, method: string, body?: any) : Promise<any> {

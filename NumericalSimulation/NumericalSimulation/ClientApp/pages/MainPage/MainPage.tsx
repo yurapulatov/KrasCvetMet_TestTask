@@ -4,14 +4,17 @@ import TableResultForm from "./TableResultForm/TableResultForm";
 import InputDataForm from "./InputDataForm/InputDataForm";
 import Helper from "../../Helper";
 import Controller from "../../Controller";
+import Schedule from "../../models/Schedule";
 
 export default function MainPage() {
 
-    const [schedule, setSchedule] = useState([]);
+    const [schedule, setSchedule] = useState<Schedule[]>([]);
     const [sessionId, setSessionId] = useState(Helper.generateUid());
     
     function sendCalculate() {
-        Controller.
+        Controller.getSchedule(sessionId).then(
+            (data: Schedule[]) => { setSchedule(data) }
+        )
     }
     
     return <div className={"main_page"}>
