@@ -1,6 +1,6 @@
 import React, {ChangeEvent, useState} from "react";
 import Controller from "../../../Controller";
-import "./FilterForm.less"
+import "./InputDataForm.less"
 import {InputDataTypeEnum} from "../../../models/InputDataTypeEnum";
 
 interface InputDataFormProps {
@@ -17,7 +17,12 @@ export default function InputDataForm(props: InputDataFormProps) {
     function uploadFile(event: ChangeEvent<HTMLInputElement>, type: InputDataTypeEnum, updateState: (value) => void) {
         /*validate input files*/
         var file = event.target.files[0];
-        Controller.PostInputUserFile(file, type, props.sessionId).then(
+        const formData = new FormData();
+        formData.append('fileData', file);
+        formData.append('type', type.valueOf().toString());
+        formData.append('sessionId', props.sessionId);
+        
+        Controller.PostInputUserFile(formData).then(
             (data: number) => {
                 switch (data) {
                     case 0:
@@ -27,10 +32,7 @@ export default function InputDataForm(props: InputDataFormProps) {
                     }
                     case -1:
                     {
-                        break;
-                    }
-                    case -2:
-                    {
+                        alert("Проблема с загрузкой файла. Неверный формат или файл является пустым.")
                         break;
                     }
                 }

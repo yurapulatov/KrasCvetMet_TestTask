@@ -7,8 +7,8 @@ export default class Controller {
     }
     
 
-    public static async PostInputUserFile(file: File, type: InputDataTypeEnum, sessionId: string) {
-        return this.sendQuery(`${this.getHost()}/simulation?sessionId=${sessionId}&type=${type}`, "POST", file);
+    public static async PostInputUserFile(formData: FormData) {
+        return this.sendFormQuery(`${this.getHost()}/simulation/add_data`, formData);
     }
 
     public static async getSchedule( sessionId: string) {
@@ -23,6 +23,14 @@ export default class Controller {
                 {'Content-Type': 'application/json;charset=utf-8'}
             ),
             body: JSON.stringify(body)
+        });
+        return response.json();
+    }
+    
+    private static async sendFormQuery(url: string, formData: any) : Promise<any> {
+        const response = await fetch(url, {
+            method: 'POST',
+            body: formData
         });
         return response.json();
     }

@@ -22,14 +22,14 @@ namespace NumericalSimulation.Controllers
             _exportService = exportService;
         }
 
-        public async Task<IActionResult> AddUserFile([FromBody] IFormFile formFile, [FromQuery] InputDataTypeEnum type,
-            [FromQuery] string sessionId)
+        [HttpPost("add_data")]
+        public async Task<IActionResult> AddUserFile([FromForm] IFormFile fileData,  [FromForm] InputDataTypeEnum type,  [FromForm] string sessionId)
         {
             try
             {
                 var sessionIdGuid = Guid.Parse(sessionId);
-                await _simulationService.SetInputData(formFile, type, sessionIdGuid);
-                return Ok();
+                var result = await _simulationService.SetInputData(fileData, type, sessionIdGuid);
+                return Ok(result);
             }
             catch (Exception e)
             {
@@ -38,6 +38,7 @@ namespace NumericalSimulation.Controllers
             }
         }
 
+        [HttpGet("schedule")]
         public IActionResult CalculationSchedule([FromQuery] string sessionId, [FromQuery] ScheduleAlgorithmTypeEnum algorithmType)
         {
             try

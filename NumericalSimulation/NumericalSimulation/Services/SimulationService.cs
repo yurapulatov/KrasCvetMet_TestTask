@@ -22,18 +22,27 @@ namespace NumericalSimulation.Services
             _calculationScheduleService = calculationScheduleService;
         }
 
-        public async Task SetInputData(IFormFile formFile, InputDataTypeEnum type, Guid sessionId)
+        public async Task<ErrorLoadFileEnum> SetInputData(IFormFile formFile, InputDataTypeEnum type, Guid sessionId)
         {
             var userInputData = _cacheService.GetUserInputData(sessionId);
-            if (userInputData == null)
+            try
             {
-                userInputData = await CreateNewUserInputData(formFile, type);
+                if (userInputData == null)
+                {
+                    userInputData = await CreateNewUserInputData(formFile, type);
+                }
+                else
+                {
+                    userInputData = await UpdateUserInputData(formFile, type, userInputData);
+                }
             }
-            else
+            catch (Exception e)
             {
-                userInputData = await UpdateUserInputData(formFile, type, userInputData);
+                return ErrorLoadFileEnum.BadFileFormat;
             }
+            
             _cacheService.AddOrUpdateNewUserInputData(userInputData, sessionId);
+            return ErrorLoadFileEnum.Ok;
         }
 
         public IEnumerable<Schedule> GetScheduleByType(Guid sessionIdGuid,

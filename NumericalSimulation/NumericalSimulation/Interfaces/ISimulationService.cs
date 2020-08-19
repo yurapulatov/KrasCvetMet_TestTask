@@ -9,7 +9,7 @@ namespace NumericalSimulation.Interfaces
 {
     public interface ISimulationService
     {
-        Task SetInputData(IFormFile formFile, InputDataTypeEnum type, Guid sessionId);
+        Task<ErrorLoadFileEnum> SetInputData(IFormFile formFile, InputDataTypeEnum type, Guid sessionId);
         IEnumerable<Schedule> GetScheduleByType(Guid sessionIdGuid, ScheduleAlgorithmTypeEnum algorithmType);
     }
 }

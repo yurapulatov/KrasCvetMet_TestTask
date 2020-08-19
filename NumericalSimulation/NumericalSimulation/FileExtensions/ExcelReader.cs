@@ -47,12 +47,15 @@ namespace NumericalSimulation.FileExtensions
                         }
                     }
                 }
-                var newMachineTool = new MachineTool
+                else
                 {
-                    Id = int.Parse(reader.GetValue(positionId.Value).ToString()),
-                    Name = reader.GetValue(positionName.Value).ToString()
-                };
-                result.Add(newMachineTool);
+                    var newMachineTool = new MachineTool
+                    {
+                        Id = int.Parse(reader.GetValue(positionId.Value).ToString()),
+                        Name = reader.GetValue(positionName.Value).ToString()
+                    };
+                    result.Add(newMachineTool);
+                }
             }
 
             return result;
@@ -93,12 +96,15 @@ namespace NumericalSimulation.FileExtensions
                         }
                     }
                 }
-                var newParty = new Party
+                else
                 {
-                    Id = int.Parse(reader.GetValue(positionId.Value).ToString()),
-                    NomenclatureId = int.Parse(reader.GetValue(positionNomenclatureId.Value).ToString())
-                };
-                result.Add(newParty);
+                    var newParty = new Party
+                    {
+                        Id = int.Parse(reader.GetValue(positionId.Value).ToString()),
+                        NomenclatureId = int.Parse(reader.GetValue(positionNomenclatureId.Value).ToString())
+                    };
+                    result.Add(newParty);
+                }
             }
 
             return result;
@@ -131,7 +137,7 @@ namespace NumericalSimulation.FileExtensions
                                 positionId = i;
                                 break;
                             }
-                            case "name":
+                            case "nomenclature":
                             {
                                 positionName = i;
                                 break;
@@ -139,12 +145,16 @@ namespace NumericalSimulation.FileExtensions
                         }
                     }
                 }
-                var newNomenclature = new Nomenclature
+                else
                 {
-                    Id = int.Parse(reader.GetValue(positionId.Value).ToString()),
-                    Name = reader.GetValue(positionName.Value).ToString()
-                };
-                result.Add(newNomenclature);
+                    var newNomenclature = new Nomenclature
+                    {
+                        Id = int.Parse(reader.GetValue(positionId.Value).ToString()),
+                        Name = reader.GetValue(positionName.Value).ToString()
+                    };
+                    result.Add(newNomenclature);
+                }
+
             }
 
             return result;
@@ -163,7 +173,7 @@ namespace NumericalSimulation.FileExtensions
                 if (positionMachineToolId == null || positionOperationTime == null || positionNomenclatureId == null)
                 {
                     var columnNames = new List<string>();
-                    columnNames = GetColumnNameFromFile(reader, 2);
+                    columnNames = GetColumnNameFromFile(reader, 3);
                     if (!columnNames.Any())
                     {
                         throw new ArgumentException("Файл пустой!");
@@ -190,13 +200,16 @@ namespace NumericalSimulation.FileExtensions
                         }
                     }
                 }
-                var newParty = new ExecuteTime
+                else
                 {
-                    MachineToolId = int.Parse(reader.GetValue(positionMachineToolId.Value).ToString()),
-                    NomenclatureId = int.Parse(reader.GetValue(positionNomenclatureId.Value).ToString()),
-                    OperationTime = int.Parse(reader.GetValue(positionNomenclatureId.Value).ToString())
-                };
-                result.Add(newParty);
+                    var executeTime = new ExecuteTime
+                    {
+                        MachineToolId = int.Parse(reader.GetValue(positionMachineToolId.Value).ToString()),
+                        NomenclatureId = int.Parse(reader.GetValue(positionNomenclatureId.Value).ToString()),
+                        OperationTime = int.Parse(reader.GetValue(positionOperationTime.Value).ToString())
+                    };
+                    result.Add(executeTime);
+                }
             }
 
             return result;

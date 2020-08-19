@@ -11,7 +11,7 @@ namespace NumericalSimulation.Services.CalculationSchedule
         public IEnumerable<Schedule> GetSchedule(IEnumerable<Party> parties, IEnumerable<MachineTool> machineToolCount)
         {
             var result = new List<Schedule>();
-            var machineToolCurrentTimeDictionary = machineToolCount.ToDictionary(x => x.Id, x => DateTime.MinValue);
+            var machineToolCurrentTimeDictionary = machineToolCount.ToDictionary(x => x.Id, x => DateTime.Today);
             foreach (var party in parties)
             {
                 DateTime? beginDateForParty = null;
@@ -44,7 +44,7 @@ namespace NumericalSimulation.Services.CalculationSchedule
                         PartyId = party.Id,
                         Party = party,
                         MachineTool = item.MachineTool,
-                        MachineToolId = item.NomenclatureId
+                        MachineToolId = item.MachineToolId
                     };
                     result.Add(schedule);
                     machineToolCurrentTimeDictionary[item.MachineToolId] = endDateForParty.Value;
