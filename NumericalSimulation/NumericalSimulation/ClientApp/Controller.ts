@@ -8,7 +8,11 @@ export default class Controller {
     
 
     public static async PostInputUserFile(file: File, type: InputDataTypeEnum, sessionId: string) {
-        return this.sendQuery(`${this.getHost()}/rates?sessionId=${sessionId}&type=${type}`, "POST", file);
+        return this.sendQuery(`${this.getHost()}/simulation?sessionId=${sessionId}&type=${type}`, "POST", file);
+    }
+
+    public static async GetSchedule( nsessionId: string) {
+        return this.sendQuery(`${this.getHost()}/simulation?sessionId=${sessionId}&type=${type}`, "POST", file);
     }
     
     private static async sendQuery(url: string, method: string, body?: any) : Promise<any> {

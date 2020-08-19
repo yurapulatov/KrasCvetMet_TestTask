@@ -1,10 +1,11 @@
-import React, {useState} from "react";
+import React, {ChangeEvent, useState} from "react";
 import Controller from "../../../Controller";
 import "./FilterForm.less"
 import {InputDataTypeEnum} from "../../../models/InputDataTypeEnum";
 
 interface InputDataFormProps {
     sessionId: string;
+    sendCalculate: () => void;
 }
 
 export default function InputDataForm(props: InputDataFormProps) {
@@ -13,31 +14,53 @@ export default function InputDataForm(props: InputDataFormProps) {
     const [nomenclatureIsLoading, setIsLoadingNomenclature] = useState(false);
     const [partyIsLoading, setIsLoadingParties] = useState(false);
     
-    function uploadFile(file: File, type: InputDataTypeEnum) {
+    function uploadFile(event: ChangeEvent<HTMLInputElement>, type: InputDataTypeEnum, updateState: (value) => void) {
+        /*validate input files*/
+        var file = event.target.files[0];
         Controller.PostInputUserFile(file, type, props.sessionId).then(
-            () => {}
+            (data: number) => {
+                switch (data) {
+                    case 0:
+                    {
+                        updateState(true);
+                        break;
+                    }
+                    case -1:
+                    {
+                        break;
+                    }
+                    case -2:
+                    {
+                        break;
+                    }
+                }
+            }
         )
     }
     
-    return <div>
+    function canSend() : boolean {
+        return partyIsLoading && machineToolsIsLoading && nomenclatureIsLoading && executeTimeIsLoading;
+    }
+    
+    return <div className={"input_data_form"}>
         <div>
-            <label>Выберите файл xls-файл с данными о номенклатуре</label>
-            <input type={"file"} onChange={(e) => uploadFile(e.target.files[0], InputDataTypeEnum.Nomenclature)}/>
+            <label className={"input_data_form__title"}>Выберите файл xls-файл с данными о номенклатуре</label>
+            <input type={"file"} onChange={(e) => uploadFile(e, InputDataTypeEnum.Nomenclature, setIsLoadingNomenclature)}/>
         </div>
         <div>
-            <label>Выберите файл xls-файл с данными об оборудовании</label>
-            <input type={"file"} onChange={(e) => uploadFile(e.target.files[0], InputDataTypeEnum.MachineTool)}/>
+            <label className={"input_data_form__title"}>Выберите файл xls-файл с данными об оборудовании</label>
+            <input type={"file"} onChange={(e) => uploadFile(e, InputDataTypeEnum.MachineTool, setIsLoadingMachineTools)}/>
         </div>
         <div>
-            <label>Выберите файл xls-файл с данными о времени выполении</label>
-            <input type={"file"} onChange={(e) => uploadFile(e.target.files[0], InputDataTypeEnum.ExecuteTime)}/>
+            <label className={"input_data_form__title"}>Выберите файл xls-файл с данными о времени выполении</label>
+            <input type={"file"} onChange={(e) => uploadFile(e, InputDataTypeEnum.ExecuteTime, setIsLoadingExecuteTimes)}/>
         </div>
         <div>
-            <label>Выберите файл xls-файл с данными о партиях</label>
-            <input type={"file"} onChange={(e) => uploadFile(e.target.files[0], InputDataTypeEnum.Party)}/>
+            <label className={"input_data_form__title"}>Выберите файл xls-файл с данными о партиях</label>
+            <input type={"file"} onChange={(e) => uploadFile(e, InputDataTypeEnum.Party, setIsLoadingParties)}/>
         </div>
-        <div>
-            
+        <div className={"input_data_form__button_submit"}>
+            <button disabled={!canSend()} onClick={() => props.sendCalculate()}>Составить расписание</button>
         </div>
         
     </div>
