@@ -54,6 +54,7 @@ namespace NumericalSimulation.Controllers
             }
         }
 
+        [HttpPost("export")]
         public IActionResult ExportScheduleToExcelFile([FromBody] IEnumerable<Schedule> schedules)
         {
             try

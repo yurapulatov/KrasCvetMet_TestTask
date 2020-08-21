@@ -3,6 +3,8 @@ import moment from "moment";
 import "./TableResultForm.less"
 import Schedule from "../../../models/Schedule";
 import MachineTool from "../../../models/MachineTool";
+import Controller from "../../../Controller";
+import Helper from "../../../Helper";
 
 export interface TableResultFormProps {
     schedule: Schedule[];
@@ -19,9 +21,26 @@ export default function TableResultForm (props: TableResultFormProps) {
             uniqueMachineIdList.forEach(x => {
                 machineTools.push(props.schedule.find(schedule => schedule.machineToolId == x).machineTool);
             })
+            machineTools = machineTools.sort((a, b) => {
+                if (a.id > b.id) {
+                    return 1;
+                }
+                if (a.id == b.id) {
+                    return 0;
+                }
+                if (a.id < b.id) {
+                    return -1;
+                }
+            });
             setHeaderItems(machineTools);
         }
     }, [props.schedule]);
+    
+    function exportToExcel() {
+        Controller.exportToExcel(props.schedule).then(
+            (data) => {Helper.downloadFile("schedule", "xlsx", data)}
+        );
+    }
     
     function renderHeaderTable() {
 
@@ -66,16 +85,20 @@ export default function TableResultForm (props: TableResultFormProps) {
     
     if (props.schedule.length > 0) {
         return <div className={"table_result_form"}>
-            <table>
-                {renderHeaderTable()}
-                {renderTableValue()}
-            </table>
-        </div>
+                <table>
+                    {renderHeaderTable()}
+                    {renderTableValue()}
+                </table>
+            <div className={"table_result_form__export"}>
+                <button onClick={() => {exportToExcel()}}>Выгрузить</button>
+            </div>
+            </div>
+
     }
     else {
         return <div className={"table_result_form table_result_form__nothing"}>
                 Nothing to show. Fill your filter and search.
         </div>
     }
-
+    
 }

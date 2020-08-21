@@ -24,19 +24,19 @@ namespace NumericalSimulation.Services
                 worksheet.Cell(currentRow, i + 2).Value = machineTools[i].Name;
             }
             
-            var groupByParties = schedules.GroupBy(x => x.PartyId);
+            var groupByParties = schedules.GroupBy(x => x.PartyId).OrderBy(x => x.Key);
             foreach (var groupByParty in groupByParties)
             {
                 currentRow++;
                 var currentColumn = 1;
                 var party = groupByParty.First().Party;
-                worksheet.Cell(currentRow, currentColumn++).Value = party.Nomenclature.Name;
+                worksheet.Cell(currentRow, currentColumn++).Value = $"Партия №{party.Id} ({party.Nomenclature.Name})";
                 foreach (var machineTool in machineTools)
                 {
                     var schedule = groupByParty.FirstOrDefault(x => x.MachineToolId == machineTool.Id);
                     if (schedule != null)
                     {
-                        worksheet.Cell(currentRow, currentColumn++).Value = $"{schedule.DateTimeFrom:hh:mm} - {schedule.DateTimeTo:hh:mm}";
+                        worksheet.Cell(currentRow, currentColumn++).Value = $"{schedule.DateTimeFrom:dd/MM HH:mm} - {schedule.DateTimeTo:dd/MM HH:mm}";
                     }
                     else
                     {

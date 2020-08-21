@@ -1,4 +1,5 @@
 import {InputDataTypeEnum} from "./models/InputDataTypeEnum";
+import Schedule from "./models/Schedule";
 
 export default class Controller {
     
@@ -15,7 +16,11 @@ export default class Controller {
         return this.sendQuery(`${this.getHost()}/simulation/schedule?sessionId=${sessionId}&algorithmType=${algorithmType}`, "GET");
     }
     
-    private static async sendQuery(url: string, method: string, body?: any) : Promise<any> {
+    public static async exportToExcel(schedules: Schedule[]) {
+        return this.sendQuery(`${this.getHost()}/simulation/export`, "POST", schedules, true);
+    }
+    
+    private static async sendQuery(url: string, method: string, body?: any, resultIsBlob: boolean = false) : Promise<any> {
 
         let response = await fetch(url, {
             method: method,
@@ -24,7 +29,13 @@ export default class Controller {
             ),
             body: JSON.stringify(body)
         });
-        return response.json();
+        if (resultIsBlob) {
+            return response.blob();
+        }
+        else {
+            return response.json();
+        }
+
     }
     
     private static async sendFormQuery(url: string, formData: any) : Promise<any> {
@@ -34,4 +45,5 @@ export default class Controller {
         });
         return response.json();
     }
+    
 }
