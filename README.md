@@ -100,4 +100,4 @@
 
 1) run `npm install`
 2) run `npm run watch`
-3) run project BadBroker.
+3) run project `NumericalSimulation`.
