@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using NumericalSimulation.Entities;
 using NumericalSimulation.Entities.Enums;
 using NumericalSimulation.Interfaces;
+using NumericalSimulation.Services.CalculationSchedule;
 
 namespace NumericalSimulation.Services
 {
@@ -13,13 +14,11 @@ namespace NumericalSimulation.Services
     {
         private readonly ICacheService _cacheService;
         private readonly IDataReader _dataReader;
-        private readonly ICalculationScheduleService _calculationScheduleService;
 
-        public SimulationService(ICacheService cacheService, IDataReader dataReader, ICalculationScheduleService calculationScheduleService)
+        public SimulationService(ICacheService cacheService, IDataReader dataReader)
         {
             _cacheService = cacheService;
             _dataReader = dataReader;
-            _calculationScheduleService = calculationScheduleService;
         }
 
         public async Task<ErrorLoadFileEnum> SetInputData(IFormFile formFile, InputDataTypeEnum type, Guid sessionId)
@@ -54,7 +53,19 @@ namespace NumericalSimulation.Services
                 throw new ArgumentNullException(nameof(inputData));
             }
             var parties = BindUserInputDataToParties(inputData);
-            var schedules = _calculationScheduleService.GetSchedule(parties, inputData.MachineToolsList);
+            ICalculationScheduleService calculationScheduleService;
+            switch (algorithmType)
+            {
+                case ScheduleAlgorithmTypeEnum.Simple:
+                    calculationScheduleService = new SimpleCalculationScheduleService();
+                    break;
+                case ScheduleAlgorithmTypeEnum.PetrovSokolicinAlgorithm:
+                    calculationScheduleService = new PetrovSokolicinCalculationScheduleService();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(algorithmType), algorithmType, null);
+            }
+            var schedules = calculationScheduleService.GetSchedule(parties, inputData.MachineToolsList);
             return schedules;
         }
 

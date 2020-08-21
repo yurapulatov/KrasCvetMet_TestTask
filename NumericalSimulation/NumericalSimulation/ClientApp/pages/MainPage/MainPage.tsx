@@ -11,14 +11,14 @@ export default function MainPage() {
     const [schedule, setSchedule] = useState<Schedule[]>([]);
     const [sessionId, setSessionId] = useState(Helper.generateUid());
     
-    function sendCalculate() {
-        Controller.getSchedule(sessionId).then(
+    function sendCalculate(algorithmType: number) {
+        Controller.getSchedule(sessionId, algorithmType).then(
             (data: Schedule[]) => { setSchedule(data) }
         )
     }
     
     return <div className={"main_page"}>
-        <InputDataForm sessionId={sessionId} sendCalculate={() => sendCalculate()}/>
+        <InputDataForm sessionId={sessionId} sendCalculate={(algorithmType) => sendCalculate(algorithmType)}/>
         <TableResultForm schedule={schedule}/>
     </div>
 }

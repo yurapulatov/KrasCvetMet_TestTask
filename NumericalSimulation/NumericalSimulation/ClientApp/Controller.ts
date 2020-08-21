@@ -11,8 +11,8 @@ export default class Controller {
         return this.sendFormQuery(`${this.getHost()}/simulation/add_data`, formData);
     }
 
-    public static async getSchedule( sessionId: string) {
-        return this.sendQuery(`${this.getHost()}/simulation/schedule?sessionId=${sessionId}`, "GET");
+    public static async getSchedule(sessionId: string, algorithmType: number) {
+        return this.sendQuery(`${this.getHost()}/simulation/schedule?sessionId=${sessionId}&algorithmType=${algorithmType}`, "GET");
     }
     
     private static async sendQuery(url: string, method: string, body?: any) : Promise<any> {

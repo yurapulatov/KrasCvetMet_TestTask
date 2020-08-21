@@ -39,7 +39,6 @@ namespace NumericalSimulation
             services.AddScoped<NumericalSimulation.Interfaces.IDataReader, ExcelReader>();
             services.AddSingleton<ICacheService, CacheService>();
             services.AddScoped<ISimulationService, SimulationService>();
-            services.AddScoped<ICalculationScheduleService, SimpleCalculationScheduleService>();
             services.AddScoped<IExportService, ExportService>();
         }
 

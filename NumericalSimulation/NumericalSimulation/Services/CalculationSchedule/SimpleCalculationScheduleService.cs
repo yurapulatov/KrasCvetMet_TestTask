@@ -8,10 +8,10 @@ namespace NumericalSimulation.Services.CalculationSchedule
 {
     public class SimpleCalculationScheduleService : ICalculationScheduleService
     {
-        public IEnumerable<Schedule> GetSchedule(IEnumerable<Party> parties, IEnumerable<MachineTool> machineToolCount)
+        public IEnumerable<Schedule> GetSchedule(IEnumerable<Party> parties, IEnumerable<MachineTool> machineTools)
         {
             var result = new List<Schedule>();
-            var machineToolCurrentTimeDictionary = machineToolCount.ToDictionary(x => x.Id, x => DateTime.Today);
+            var machineToolCurrentTimeDictionary = machineTools.ToDictionary(x => x.Id, x => DateTime.Today);
             foreach (var party in parties)
             {
                 DateTime? beginDateForParty = null;

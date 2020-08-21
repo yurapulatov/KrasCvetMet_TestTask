@@ -12,7 +12,7 @@ export default function TableResultForm (props: TableResultFormProps) {
     const [headerItems, setHeaderItems] = useState<MachineTool[]>([]);
 
     useEffect(() => {
-        if (props.schedule.length > 0 && headerItems.length == 0) {
+        if (props.schedule.length > 0) {
             var machineIdList = props.schedule.map(x => x.machineToolId);
             var uniqueMachineIdList = Array.from(new Set(machineIdList));
             var machineTools : MachineTool[] = [];
@@ -21,7 +21,7 @@ export default function TableResultForm (props: TableResultFormProps) {
             })
             setHeaderItems(machineTools);
         }
-    })
+    }, [props.schedule]);
     
     function renderHeaderTable() {
 
